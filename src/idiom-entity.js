@@ -1,4 +1,5 @@
-export const entities={"00006_w01.jpg":"",
+export const entities={
+    "00006_w01.jpg":"‵渷兗兖′",//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=6
     "00022_w01.jpg":"卨",
     "00164_w01.jpg":"抂",
     "002.jpg":"謩",
@@ -8,10 +9,10 @@ export const entities={"00006_w01.jpg":"",
     "00695_w01.jpg":"𡵚",//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=693&webMd=2&la=0
     "00801_w01.jpg":"‵𡧛付品′",//宮
     "00875_w01.jpg":"𢧵",//https://zh.wikipedia.org/wiki/s:%E5%90%8E%E6%B1%89%E4%B9%A6/%E5%8D%B762
-    "01077_w01.jpg":"",
+    "01077_w01.jpg":"‵𩥅馬虫′",
     "01228_w01.jpg":"‵虯丩阝′",//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=1222&webMd=2&la=0
     "01265_w01.jpg":"敭",
-    "04406-001_1.jpg":"",
+    "04406-001_1.jpg":"坂",
     "244fe.jpg":"𤓾", //受
     "25cd1.jpg":"𥳑", 
     "4789.jpg":"䞉",
@@ -44,5 +45,6 @@ export const entities={"00006_w01.jpg":"",
     "lei3.jpg":"㠥",
     "lei3_old.jpg":"𡾋",
     "qian.jpg":"岍",
-    "zhen3.jpg":"𠘱"//珍？
+    "zhen3.jpg":"𠘱",//珍？
+    "zhun3.jpg":"𠟃",//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=-875&webMd=2&la=0
     }
