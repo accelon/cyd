@@ -1,0 +1,13 @@
+{
+  "name": "cyd",
+  "version": "1.0.0",
+  "description": "台湾教育部成語典轉 PTK 格式",
+  "main": "xml2json.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
