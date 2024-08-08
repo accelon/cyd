@@ -14,6 +14,7 @@ const hotfix=(idiom,fields)=>{
     const fixes=hotfixes[idiom];
     if (!fixes)return;
     for (let i=0;i<fixes.length;i++) {
+        if (!fixes[i]) throw idiom+' wrong fix'
         const [fid,from,to]=fixes[i]
         fields[fid]=fields[fid].replace(from,to);
     }
@@ -89,14 +90,13 @@ const gen=(lines)=>{
             if (m&&!m1) console.log('missing 見',idiom)
             if (m1&&!m){
                 if (!CY[m1[1]]) {
-                    console.log(idiom,m1[1])
+                    console.log(idiom,m1[1],'not found')
                 } else CY[m1[1]].referBy.push(idiom)
             } 
         }
 
     }
 }
-
-
 gen(readTextLines(srcfn))
+
 writeChanged('idioms.json',JSON.stringify(CY,'',' '),true);
