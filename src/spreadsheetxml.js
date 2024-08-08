@@ -48,6 +48,7 @@ export const fromOpenDocumentXML=(content,entities, idfield=0)=>{
 		at2=content.indexOf("</table:table-row",at2);
 		const rowcontent=content.slice(at,at2);
 		const row=parseRowContent(rowcontent,entities,nrow);
+		//if (row.length& row[0]) 
 		entries.push(row.join('\t'));
 		at=content.indexOf("<table:table-row",at2)
 		nrow++;
@@ -84,7 +85,7 @@ export const fromExcelXML=(content,entities, idfield=0)=>{
 		// if (row.length!==cols) {
 		// 	console.log('wrong ending data',row.length,cols)
 		// } else 
-		entries.push(row)
+		if (row.length& row[0]) entries.push(row)
 	})
 	return entries;
 }

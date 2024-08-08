@@ -8,3 +8,7 @@
     download latest zip
     convert to xml and save in raw
     https://www.freeconvert.com/xlsx-to-xml
+
+    node xml2tsv  // dump all data into tsv format , crlf as \n
+
+    node gen

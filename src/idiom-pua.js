@@ -1,0 +1,89 @@
+export const PUA2HZPX={
+    'e000':'楇木弓', // https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=34&webMd=2&la=0
+    'e001':'宊宀艹', //https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=3437
+    'e002':'𦜕',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=4814&webMd=2&la=0
+    'e003':'𨬐',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=538&webMd=2&la=0
+    'e004':'䄡', //礻部作示 https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=3369&webMd=2&la=0
+    'e005':'𨎹',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=634&webMd=2&la=0
+    'e006':'𩃷',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=3824&webMd=2&la=0
+    'e007':'𠵦',
+    'e008':'𡵚',
+    'e009':'𬎙',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=933&webMd=2&la=0
+    'e010':'𡟈',
+    'e011':'𩬚',
+    'e012':'杋木禾',
+    'e013':'恚圭至',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=1226&webMd=2&la=0
+    'e014':'𥙂',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=-1342&webMd=2&la=1
+    'e015':'𥿄',//紙 https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=1572&q=1
+    'e016':'𢇍',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=2087&webMd=2&la=0
+    //'e017':'',
+    'e018':'𫨻',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=3448&webMd=2&la=0
+    'e019':'𨵦',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=293
+    'e020':'𡉚',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=155&q=1&webMd=2&la=0
+    'e021':'𣱦',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=3211&webMd=2&la=0
+    'e022':'𡱝',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=4336&webMd=2&la=0
+    'e023':'𧜟',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=2850&webMd=2&la=0
+    'e024':'𧹞',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=-1342&webMd=2&la=1
+    'e025':'𠂤',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=2593
+    'e026':'𦜕', //同E002 https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=4133
+    'e027':'𠹔',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=1402&webMd=2&la=0
+    'e028':'𢤧',//https://dict.idioms.moe.edu.tw/idiomView.jsp?ID=1898
+    //'e029':'',
+    'e030':'𨍜',//https://sou-yun.cn/CharInClause.aspx?c=%E7%A5%9E&p=0&t=Fu&page=1
+    //https://suzukish.sakura.ne.jp/search/xianqin/index.php?jingName=%E5%85%A8%E5%AE%8B%E6%96%87&pianId=146&zhangId=1&gr=h&scholar=%E4%BA%8E%E5%AE%89%E7%80%BE
+
+    //不知為何用造字區？
+    "f901":"更",
+    "f906":"句",
+    "f90a":"金",
+    "f91e":"爛",
+    "f91f":"蘭",
+    "f92a":"浪",
+    "f92c":"郎",
+    "f92d":"來",
+    "f934":"老",
+    "f937":"路",
+    "f938":"露",
+    "f93d":"綠",
+    "f943":"弄",
+    "f94b":"屢",
+    "f963":"北",
+    "f966":"復",
+    "f967":"不",
+    "f96d":"省",
+    "f96e":"葉",
+    "f96f":"說",
+    "f974":"若",
+    "f977":"亮",
+    "f98a":"力",
+    "f98e":"年",
+    "f994":"璉",
+    "f999":"蓮",
+    "f99a":"連",
+    "f9a8":"令",
+    "f9b6":"禮",
+    "f9b9":"惡",
+    "f9ba":"了",
+    "f9be":"料",
+    "f9c4":"龍",
+    "f9c6":"阮",
+    "f9c7":"劉",
+    "f9ca":"流",
+    "f9cd":"留",
+    "f9d0":"類",
+    "f9dc":"棟",
+    "f9e0":"易",
+    "f9e1":"李",
+    "f9e4":"理",
+    "f9e8":"裡",
+    "f9e9":"里",
+    "f9ea":"離",
+    "f9f3":"麟",
+    "f9f4":"林",
+    "fa00":"切",
+    "fa08":'行',
+    "fa0a":"見",
+    "fa22":"諸",
+    "fa25":"逸",
+    "fa26":"都",
+}
