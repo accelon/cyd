@@ -1,102 +1,103 @@
-/* generate offtext format*/
-import {nodefs,writeChanged,readTextContent, readTextLines} from 'ptk/nodebundle.cjs';
-import {parseFootNoteInSource,parseSourceComment,parseShiyi} from './src/moeformat.js'
-import {hotfixes} from './src/idiom-hotfix.js'
-import {Missing} from './src/missing.js';//原始檔沒有，網站有，補上
-
+/* create ptk source file */
+import {nodefs, readTextContent, unique, writeChanged} from 'ptk/nodebundle.cjs'
+import {parseProof} from './src/moeformat.js'
 await nodefs;
-const CY={}
-const srcfn='raw/dict_idioms.tsv';
-const skips=[354];//含沙射影 完全重覆
+const CY=JSON.parse( readTextContent("raw/idioms.json"))
 
+/*
+   orth : 標準形態（不一定和語本一致）
 
-const hotfix=(idiom,fields)=>{
-    const fixes=hotfixes[idiom];
-    if (!fixes)return;
-    for (let i=0;i<fixes.length;i++) {
-        if (!fixes[i]) throw idiom+' wrong fix'
-        const [fid,from,to]=fixes[i]
-        fields[fid]=fields[fid].replace(from,to);
-    }
+*/
+const DEFINATION=[];//key: orth,      標準形態-釋義,  原意，語本，用法，只收 常用體(解釋出處)
+const SOURCES={};//key: 出處名+orth 帶腳注的原文，連到
+const LEXICON=["^:[name=idiomlexicon]\t原形\t同義\t反義\t參考"];//key: 詞形, orth, 同義, 反義, 參考
+const PROOFS={};//key 出處名+idiom 
+const dictionary={}//所有出現過的詞都有key
+const BOOKS={};
+for (let idiom in CY) {
+    dictionary[idiom]={ori:'',synonym:[],antonym:[],references:[]};
 }
-
-const gen=(lines)=>{
-    for (let key in Missing) {
-        //原始檔缺的主要成語，必須補上
-        lines.push(Missing[key].join('\t'));
-    }
-    for (let i=1;i<lines.length;i++) {
-        if (!skips.indexOf(i))continue;
-        const notes={};
-        const line=lines[i].replace(/\\n/g,'\n');
-        let fields=line.split('\t');
-        hotfix(fields[1],fields);
-        let [id,idiom,zhuyin,shiyi,sourcebook,sourcecontent,sourcecomment,sourcerefer,sourceexplain,
-        //編號,成語,注音,釋義,典源文獻名稱,典源文獻內容,典源-註解,典源-參考,典故說明,
-        usage,usagetype,usageexample,
-        //用法-語意說明,用法-使用類別,用法-例句,
-        proof, regconizesame,regconizediff,regconizeexample,
-        //書證,辨識-同,辨識-異,辨識-例句,
-        correction,synonym,antonym,reference
-        //形音辨誤,近義-同,近義-反,參考成語(正文)
-        ]=fields;
-        if (!id) continue;
-        const aname=[],triangle=[];
-        shiyi=parseShiyi(shiyi,aname,triangle);
-        sourcebook=parseFootNoteInSource(sourcebook,notes,idiom);
-        sourcecontent=parseFootNoteInSource(sourcecontent,notes,idiom);
-        sourcecontent=sourcecontent.replace(/此處所列為「[^」]+」之典源，提供參考。/,'')
-        sourceexplain=sourceexplain.replace(/此處所列為「[^」]+」之典故說明，提供參考。/,'')
-        parseSourceComment(sourcecomment,notes,idiom)
-        if (CY[idiom]) {
-            console.log("REPEATED",idiom)
-        } else {
-            CY[idiom]={id,idiom,shiyi,referBy:[],notes};
-            
-            if (sourcebook&&sourcebook.length) CY[idiom].sourcebook=sourcebook;
-            if (sourcecontent&&sourcecontent.length) CY[idiom].sourcecontent=sourcecontent;
-            if (sourceexplain&&sourceexplain.length) CY[idiom].sourceexplain=sourceexplain;
-            if (sourcerefer&&sourcerefer.length) CY[idiom].sourcerefer=sourcerefer;
-            if (reference&&reference.length) CY[idiom].reference=reference;
-            if (sourcerefer&&sourcerefer.length) CY[idiom].sourcerefer=sourcerefer;
-
-            if (triangle.length) CY[idiom].triangle=triangle;
-            if (aname.length) CY[idiom].aname=aname;
-            if (synonym&&synonym.length) CY[idiom].synonym=synonym.split(/[、，,]/);
-            if (antonym&&antonym.length) CY[idiom].antonym=antonym.split(/[、，,]/);
-
-            
-            if (usage&&usage.length) CY[idiom].usage=usage;
-            if (usagetype&&usagetype.length) CY[idiom].usagetype=usagetype;
-            if (usageexample&&usageexample.length) CY[idiom].usageexample=usageexample;
-
-            if (proof&&proof.length) CY[idiom].proof=proof;
-            if (regconizesame&&regconizesame.length) CY[idiom].regconizesame=regconizesame;
-            if (regconizediff&&regconizediff.length) CY[idiom].regconizediff=regconizediff;
-            if (regconizeexample&&regconizeexample.length) CY[idiom].regconizeexample=regconizeexample;
-            if (correction&&correction.length) CY[idiom].correction=correction;
-          }
-        //if (i==2) console.log(id,idiom,reference)
-    }
-
-    //second phase
-    for (let key in CY) {
-        const {idiom,shiyi,sourcecontent}=CY[key];
-        const m1=shiyi.match(/見「([^」]+)」/);
-        const m=(sourcecontent||'').match(/此處所列為「([^」]+)」之典源，提供參考。/)
-        if (m&&m1) {
-            if (m[1]!==m1[1]) console.log('inconsistent',idiom,m[1],m1[1])
-        } else {
-            if (m&&!m1) console.log('missing 見',idiom)
-            if (m1&&!m){
-                if (!CY[m1[1]]) {
-                    console.log(idiom,m1[1],'not found')
-                } else CY[m1[1]].referBy.push(idiom)
-            } 
+//如果無此key ，增加到dictionary，增將 field 填入 idom
+const addDictionary=(keys,idiom,field)=>{
+    for (let i=0;i<keys.length;i++) {
+        const key=keys[i];
+        if (!dictionary[key]) dictionary[key]={ori:'',synonym:[],antonym:[],references:[]};
+        try {
+            dictionary[key][field].push(idiom);
+        } catch(e) {
+            console.log('field',field,keys,dictionary[key],idiom)
         }
+        
+    }    
+}
+
+for (let idiom in CY) {
+    let {shiyi,sourcecontent,sourcebook,sourceexplain,notes,
+        reference, triangle, synonym,antonym,aname,proof,ori,
+    } =  CY[idiom];
+    let references=[]
+    if (reference) references.push(...reference)
+    if (triangle) references.push(...triangle)
+    if (aname) references.push(...aname)
+
+    //移除已經在  同義、反義的
+    for (let i=0;i<references.length;i++) {
+        if (synonym&&~synonym.indexOf(references[i]))references[i]=''
+        if (antonym&&~antonym.indexOf(references[i]))references[i]=''
+        if (ori==references[i])references[i]=''
+        if (idiom==references[i])references[i]=''
+    }
+    references=unique(references.filter(it=>!!it));
+
+    if (references) addDictionary(references,idiom,"references");
+    if (synonym) addDictionary(synonym,idiom,"synonym");
+    if (antonym) addDictionary(antonym,idiom,"antonym");
+   
+    dictionary[idiom]={ori,synonym:synonym||[],antonym:antonym||[],references};
+
+    
+    shiyi=shiyi.replace(/\n/g,'')
+    shiyi=shiyi.replace(/[＃◎※]*?[典語]或?[出本][^《〈]{0,10}[《〈][^》〉]+[》〉][^》〉。]{0,5}。?/g,'');
+    shiyi=shiyi.replace(/後亦?用「[^」]+」/,'');
+    if (~shiyi.indexOf('「'+idiom+'」')) shiyi=shiyi.replace('「'+idiom+'」','')
+
+    if (sourcecontent) {//是orth
+        DEFINATION.push(idiom+'\t'+shiyi);
+    } else { //
 
     }
-}
-gen(readTextLines(srcfn))
 
-writeChanged('idioms.json',JSON.stringify(CY,'',' '),true);
+    if (sourcebook) {
+        const sourcebooks=typeof sourcebook=='string'?[sourcebook]:sourcebook;
+        for (let i=0;i<sourcebooks.length;i++) {
+            const m=sourcebooks[i].match(/《([^》．]+).*》/);
+            const book=m?m[1]:sourcebooks[i];
+            if (!BOOKS[book])BOOKS[book]={idioms:[],contents:[]}
+            if (!~BOOKS[book].idioms.indexOf(idiom)) {
+                BOOKS[book].idioms.push(idiom)
+                BOOKS[book].contents.push(sourcecontent)    
+            }
+        }
+    }
+}
+const genLexicon=()=>{
+    for (let idiom in dictionary) {
+        const d=dictionary[idiom];
+        LEXICON.push(idiom+'\t'+(d.ori||'')+'\t'+d.synonym+'\t'+d.antonym+'\t'+d.references);
+    }
+    writeChanged('off/lexicon.tsv',LEXICON.join('\n'),true)
+}
+genLexicon()
+
+const morethanone=[];
+for (let book in BOOKS) {
+    // if (BOOKS[book].idioms.length>1) {
+        morethanone.push(book+'\t'+BOOKS[book].idioms.length+'\t'+BOOKS[book].idioms.join(',')
+    
+        //+'\t'+BOOKS[book].contents.join('\t'))
+     );
+    // }
+}
+
+writeChanged('off/shiyi.tsv',DEFINATION.join('\n'),true)
+writeChanged('book2contents.off',morethanone.join('\n'),true)

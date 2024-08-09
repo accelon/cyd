@@ -11,4 +11,6 @@
 
     node xml2tsv  // dump all data into tsv format , crlf as \n
 
+    node tsv2json  //從tsv 產生 json 注連接注腳
+    
     node gen
