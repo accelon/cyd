@@ -1,6 +1,7 @@
 /* generate offtext format*/
 import {nodefs,writeChanged,readTextContent, readTextLines} from 'ptk/nodebundle.cjs';
-import {parseFootNoteInSource,parseSourceComment,parseShiyi,parseSourceExplain,parseSourceContent} from './src/moeformat.js'
+import {parseFootNoteInSource,parseSourceComment,parseShiyi,
+    parseSourceExplain,parseSourceContent,buildnotes} from './src/moeformat.js'
 import {hotfixes} from './src/idiom-hotfix.js'
 import {Missing} from './src/missing.js';//原始檔沒有，網站有，補上
 
@@ -46,6 +47,7 @@ const gen=(lines)=>{
         sourcebook=parseFootNoteInSource(sourcebook,notes,idiom);
         sourcecontent=parseFootNoteInSource(sourcecontent,notes,idiom);
         parseSourceComment(sourcecomment,notes,idiom)
+
         if (CY[idiom]) {
             console.log("REPEATED",idiom)
         } else {
@@ -88,7 +90,9 @@ const gen=(lines)=>{
             if (sourcecontent&&sourcecontent.length) CY[idiom].sourcecontent=sourcecontent;
             if (sourceexplain&&sourceexplain.length) CY[idiom].sourceexplain=sourceexplain;
             if (sourcerefer&&sourcerefer.length) CY[idiom].sourcerefer=sourcerefer;
-            if (Object.keys(notes).length) CY[idiom].notes=notes;
+            if (Object.keys(notes).length) {
+                CY[idiom].sourcenotes=buildnotes(notes); 
+            }
 
             if (reference&&reference.length) CY[idiom].reference=reference.split(/[，、,]/);
 

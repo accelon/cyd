@@ -1,6 +1,6 @@
 /* create ptk source file */
 import {nodefs, readTextContent, unique, writeChanged} from 'ptk/nodebundle.cjs'
-import {parseProof} from './src/moeformat.js'
+import {parseProof,inlineNote} from './src/moeformat.js'
 await nodefs;
 const CY=JSON.parse( readTextContent("raw/idioms.json"))
 
@@ -32,7 +32,7 @@ const addDictionary=(keys,idiom,field)=>{
 }
 
 for (let idiom in CY) {
-    let {shiyi,sourcecontent,sourcebook,sourceexplain,notes,
+    let {shiyi,sourcecontent,sourcebook,sourceexplain,sourcenotes,
         reference, triangle, synonym,antonym,aname,proof,ori,
     } =  CY[idiom];
     let references=[]
@@ -69,15 +69,21 @@ for (let idiom in CY) {
 
     if (sourcebook) {
         const sourcebooks=typeof sourcebook=='string'?[sourcebook]:sourcebook;
+        const sourcecontents=typeof sourcecontent=='string'?[sourcecontent]:sourcecontent;
+        //const sourceexplains=typeof sourceexplain=='string'?[sourceexplain]:sourceexplain;
+        const sourcenotess=Array.isArray(sourcenotes)?sourcenotes:[sourcenotes];
+
         for (let i=0;i<sourcebooks.length;i++) {
-            const m=sourcebooks[i].match(/《([^》．]+).*》/);
-            const book=m?m[1]:sourcebooks[i];
-            if (!BOOKS[book])BOOKS[book]={idioms:[],contents:[]}
+            // const m=sourcebooks[i].match(/《([^》．]+).*》/);
+            // const book=m?m[1]:sourcebooks[i];
+            const book=sourcebooks[i];
+            if (!BOOKS[book])BOOKS[book]={idioms:[],contents:[],sourcenotes:[]}
             if (!~BOOKS[book].idioms.indexOf(idiom)) {
-                BOOKS[book].idioms.push(idiom)
-                BOOKS[book].contents.push(sourcecontent)    
+                BOOKS[book].idioms.push(idiom);
+                const content=inlineNote(sourcecontents[i],sourcenotess[i])
+                BOOKS[book].contents.push(content);
             }
-        }
+        }       
     }
 }
 const genLexicon=()=>{
@@ -89,15 +95,26 @@ const genLexicon=()=>{
 }
 genLexicon()
 
-const morethanone=[];
+const bookoccur=[];
+const bookcontent=[];
+const booknotes=[];
+let group=0;
+const dumpnotes=notes=>{
+    const out=[];
+//    console.log(notes)
+    for(let key in notes) {
+        out.push(key+'\t'+notes[key]);
+    }
+
+    return out;
+}
 for (let book in BOOKS) {
-    // if (BOOKS[book].idioms.length>1) {
-        morethanone.push(book+'\t'+BOOKS[book].idioms.length+'\t'+BOOKS[book].idioms.join(',')
-    
-        //+'\t'+BOOKS[book].contents.join('\t'))
-     );
-    // }
+    group++;
+    bookoccur.push(group+'\t'+book+'\t'+BOOKS[book].idioms.length+'\t'+BOOKS[book].idioms.join(','));
+    bookcontent.push(group+'\t'+BOOKS[book].contents.join('\n'));
+
 }
 
 writeChanged('off/shiyi.tsv',DEFINATION.join('\n'),true)
-writeChanged('book2contents.off',morethanone.join('\n'),true)
+writeChanged('bookoccur.tsv',bookoccur.join('\n'),true)
+writeChanged('bookcontent.off',bookcontent.join('\n'),true)

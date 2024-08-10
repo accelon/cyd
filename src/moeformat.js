@@ -2,6 +2,7 @@
 
 曲突徙薪 缺 內文注標記
 */
+import {eatofftag, parseOfftag, unitize} from 'ptk/nodebundle.cjs'
 export const parseFootNoteInSource=(str,notes,idiom)=>{
     return str.replace(/\n?\*(\d+)\*(.*)\n?/g,(m,id,caption)=>{
         if (notes[caption] && notes[caption].id!==id) { //出現多次而id 不同
@@ -25,7 +26,7 @@ export const parseSourceComment=(str,notes,idiom)=>{
             continue;
         }
         if (notes[m[1]]) {
-            notes[m[1]].note=line.slice(m.length);
+            notes[m[1]].note=line.slice(m[0].length);
         } else {
             console.log(idiom,'note not found',m[1])
         }
@@ -113,4 +114,49 @@ export const parseProof=(lines)=>{
         const line=lines[i];
         line.match
     }
+}
+/*
+  notes:{
+     a:{  id:1 ,note:'notea'}
+     b:{  id:2 ,note:'noteb'}
+     c:{  id:1 ,note:'notec'}
+     d:{  id:2 ,note:'noted'}
+  } 
+   ===>
+   notes:[{a:'notea', b:'noteb'},
+          {c:'noted', d:'noteb'},
+   ]
+   如果只有一組，notes 只是object
+*/
+export const buildnotes=notes=>{
+    const out=[];
+    let group={};
+    for (let key in notes) {
+        if (notes[key].id=="1") {
+            if (Object.keys(group).length) {
+                out.push(group)
+                group={};
+            }
+        }
+        group[key]=notes[key].note;
+    }
+    out.push(group);
+    return out.length==1?out[0]:out;
+}
+
+export const inlineNote=(offtext,notes)=>{
+    if (!notes||!offtext) return offtext;
+    const units=unitize(offtext);
+    let out=''
+    for (let i=0;i<units.length;i++) {
+        const unit=units[i]
+        if (unit.startsWith('^f')) {
+            const tag=eatofftag(unit.slice(1));
+            const key=unit.slice(tag.length+2,unit.length-1);
+            out+='^{l:'+key.length+' t:"'+notes[key]+'"}'+key;
+        } else {
+            out+=unit;
+        }
+    }
+    return out;
 }
