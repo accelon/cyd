@@ -115,7 +115,7 @@ for (let book in BOOKS) {
 
 }
 
-DEFINATION.unshift('\t成語典釋義');
+DEFINATION.unshift('{id:"shiyi",title:"成語釋義"}\n成語典釋義');
 writeChanged('off/shiyi.pgd',DEFINATION.join('\n'),true)
 writeChanged('bookoccur.tsv',bookoccur.join('\n'),true)
 writeChanged('bookcontent.off',bookcontent.join('\n'),true)
