@@ -1,8 +1,16 @@
 /* create ptk source file */
-import {nodefs, readTextContent, unique, writeChanged} from 'ptk/nodebundle.cjs'
-import {parseProof,inlineNote} from './src/moeformat.js'
+import {nodefs, readTextContent, unique, writeChanged,deepReadDir} from 'ptk/nodebundle.cjs'
+import {inlineNote} from './src/moeformat.js'
+import {getproof, loadproof} from './src/insertproof.js'
 await nodefs;
 const CY=JSON.parse( readTextContent("raw/idioms.json"))
+
+const files=(await deepReadDir("proof")).forEach(loadproof)
+
+
+
+// loadproof("proof/lunyu.tsv");
+// loadproof("proof/zhuangzi.tsv");
 
 /*
    orth : 標準形態（不一定和語本一致）
@@ -62,7 +70,7 @@ for (let idiom in CY) {
     if (~shiyi.indexOf('「'+idiom+'」')) shiyi=shiyi.replace('「'+idiom+'」','')
 
     if (sourcecontent) {//是orth
-        DEFINATION.push(idiom+'\t'+shiyi);
+        DEFINATION.push(idiom+'\t'+shiyi+ getproof(idiom).join(' '));
     } else { //
 
     }
